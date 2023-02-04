@@ -17,6 +17,9 @@ public class CollisionCtl : MonoBehaviour
     public bool isScaleUp { get; set; }
     public bool isScaleDown { get; set; }
     private float powerupCounter;
+    private CowndownTime cowndownTime;
+    private LevelTimer levelTimer;
+    [SerializeField] Transform nextMapUI;
     
 
     private AudioSource audioSource;
@@ -31,6 +34,8 @@ public class CollisionCtl : MonoBehaviour
 
     private void Start()
     {
+        cowndownTime = CowndownTime.cowndownTime;
+        levelTimer = LevelTimer.instance;
         audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
         ogScale = transform.localScale;
@@ -73,6 +78,7 @@ public class CollisionCtl : MonoBehaviour
 
     void resetScene()
     {
+        levelTimer.SetLevelTimer();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -86,11 +92,7 @@ public class CollisionCtl : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Finish":                  
-                audioSource.Stop();
-                audioSource.PlayOneShot(finishAudio);
-                finishParticle.Play();
-                GetComponent<MoveCtl>().enabled = false;
-                Invoke("nextScene", 1f);                
+                Finish();            
                 break;          
             case "Start":                
                 break;
@@ -163,6 +165,17 @@ public class CollisionCtl : MonoBehaviour
     // public void SetShieldTimer(float time){
     //     shieldDuration = time;
     // }
+    private void Finish(){
+        audioSource.Stop();
+        audioSource.PlayOneShot(finishAudio);
+        finishParticle.Play();
+        rb.isKinematic = true;
+        GetComponent<MoveCtl>().enabled = false;
+        nextMapUI.gameObject.SetActive(true);
+        nextMapUI.GetComponent<NextMap>().SetText();
+        // levelTimer.ResetLevelTimer();
+        // Invoke("nextScene", 1f);
+    }
     private void Die(){
         audioSource.Stop();
         audioSource.PlayOneShot(deathAudio);
@@ -170,6 +183,7 @@ public class CollisionCtl : MonoBehaviour
         GetComponent<MoveCtl>().enabled = false;
         rb.isKinematic = true;
         GetComponent<MeshRenderer>().enabled = false;
+        
         Invoke("resetScene", 1f);
     }
 }

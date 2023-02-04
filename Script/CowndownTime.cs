@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CowndownTime : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class CowndownTime : MonoBehaviour
     [SerializeField] private float currTime;
     [SerializeField] private float startTime;
 
-    [SerializeField] private TextMeshProUGUI meshPro;
+    [SerializeField] private TextMeshProUGUI meshPro, levelText;
     // Start is called before the first frame update
     void Awake(){
         cowndownTime = this;
@@ -17,8 +18,9 @@ public class CowndownTime : MonoBehaviour
     void Start()
     {
         currTime = 0;
-        meshPro.GetComponent<TextMeshProUGUI>();
         meshPro.enabled = false;
+        levelText.text = "Level " + SceneManager.GetActiveScene().buildIndex;
+        // meshPro.enabled = false;
     }
 
     public void SetTime(float time){
